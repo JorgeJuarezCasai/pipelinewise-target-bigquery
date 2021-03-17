@@ -261,6 +261,13 @@ class DbSync:
                                     collecting catalog informations from BigQuery for caching
                                     purposes.
         """
+        
+        print("============== DbSync =================")
+        print(connection_config)
+        print("============== DbSync 2 =================")
+        logger.info(connection_config)
+        
+        
         self.connection_config = connection_config
         self.stream_schema_message = stream_schema_message
 
