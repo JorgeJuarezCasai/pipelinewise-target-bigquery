@@ -496,7 +496,7 @@ class DbSync:
         
         if "write_date" in columns:
             extra_condition = " AND s.write_date = {}.write_date ".format(table_without_schema)
-        else
+        else:
             extra_condition = ""
             
         primery_key_condition = self.primary_key_condition(table_without_schema) + extra_condition
