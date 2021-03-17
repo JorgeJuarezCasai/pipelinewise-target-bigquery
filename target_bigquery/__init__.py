@@ -326,6 +326,12 @@ def flush_streams(
     :param filter_streams: Keys of streams to flush from the streams dict. Default is every stream
     :return: State dict with flushed positions
     """
+    
+    print("===========LOG CONFIG TARGET ===========")
+    logger.info("===========LOG CONFIG TARGET ===========")
+    print(config)
+    logger.info(config)
+    
     parallelism = config.get("parallelism", DEFAULT_PARALLELISM)
     max_parallelism = config.get("max_parallelism", DEFAULT_MAX_PARALLELISM)
 
