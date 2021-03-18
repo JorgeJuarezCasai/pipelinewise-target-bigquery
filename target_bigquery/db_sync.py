@@ -501,12 +501,23 @@ class DbSync:
         table_without_schema = self.table_name(stream_schema_message['stream'], without_schema=True)
         temp_schema = self.connection_config.get('temp_schema', self.schema_name)
         
-        if "write_date" in columns:
-            extra_condition = " AND s.write_date = {}.write_date ".format(table_without_schema)
-        else:
-            extra_condition = ""
+        # if "write_date" in columns:
+        #     extra_condition = " AND s.write_date = {}.write_date ".format(table_without_schema)
+        # else:
+        #     extra_condition = ""
             
-        primery_key_condition = self.primary_key_condition(table_without_schema) + extra_condition
+        # primery_key_condition = self.primary_key_condition(table_without_schema) + extra_condition
+        primary_key_condition = self.primary_key_condition(table_without_schema)
+        if self.connection_config.get("track_changes", False):
+            if self.connection_config.get("track_tables", {}).get(stream_schema_message['stream'], False):
+                track_cols = self.connection_config.get("track_tables", {}).get(stream_schema_message['stream'], [])
+                if len(track_cols) > 0:
+                    track_condition = " AND" + " AND ".join(["s.{} = {}.{}".format(col, table_without_schema) for col in track_cols])
+                    primary_key_condition = primary_key_condition + track_condition
+        
+        print("+++++++++ CONDITIONS +++++++++")
+        print(primary_key_condition)
+        print("+++++++++ END CONDITIONS +++++++++")
 
         result = """MERGE {table}
         USING {temp_schema}.{temp_table} s
@@ -519,7 +530,7 @@ class DbSync:
             table=table,
             temp_schema=temp_schema,
             temp_table=temp_table,
-            primary_key_condition=primery_key_condition,
+            primary_key_condition=primary_key_condition,
             set_values=', '.join(
                 '{}=s.{}'.format(
                     safe_column_name(self.renamed_columns.get(c, c), quotes=True),
