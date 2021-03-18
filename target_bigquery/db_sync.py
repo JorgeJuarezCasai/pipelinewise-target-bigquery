@@ -512,7 +512,7 @@ class DbSync:
             if self.connection_config.get("track_tables", {}).get(stream_schema_message['stream'], False):
                 track_cols = self.connection_config.get("track_tables", {}).get(stream_schema_message['stream'], [])
                 if len(track_cols) > 0:
-                    track_condition = " AND" + " AND ".join(["s.{} = {}.{}".format(col, table_without_schema) for col in track_cols])
+                    track_condition = " AND" + " AND ".join(["s.{} = {}.{}".format(col, table_without_schema, col) for col in track_cols])
                     primary_key_condition = primary_key_condition + track_condition
         
         print("+++++++++ CONDITIONS +++++++++")
